@@ -1,0 +1,16 @@
+langchain
+langgraph
+langsmith
+
+langchain-core
+langchain-google-genai
+
+exa-py
+
+uvicorn
+python-dotenv
+
+psycopg
+pydantic
+
+
