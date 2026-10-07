@@ -5,7 +5,7 @@ from graph.nodes.lead_extraction_node import lead_extractor
 from graph.nodes.lead_verification_node import lead_verification_node
 from graph.nodes.finalize_leads import finalize_leads
 from graph.nodes.query_generation_node import query_generation_node
-from graph.state import LeadAgentState
+from graph.state.state import LeadAgentState
 
 from config.database_config import checkpointer
 

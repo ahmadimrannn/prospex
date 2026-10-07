@@ -1,6 +1,4 @@
 from uuid import UUID, uuid4
-
-from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel, Field
 from graph.graph_builder import graph
 
