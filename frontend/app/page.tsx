@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -72,9 +73,21 @@ interface ApiError {
 }
 
 export default function LeadGenerationPage() {
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<ApiError | null>(null);
   const [result, setResult] = React.useState<ApiResponse | null>(null);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } finally {
+      router.push("/login");
+      router.refresh();
+    }
+  };
 
   const form = useForm<LeadFormValues>({
     resolver: zodResolver(leadFormSchema),
@@ -182,13 +195,23 @@ export default function LeadGenerationPage() {
       <div className="w-full max-w-2xl space-y-8">
         {/* Lead Generation Form Card */}
         <Card className="w-full">
-          <CardHeader>
-            <CardTitle className="font-manrope font-normal text-2xl">
-              Lead Generation
-            </CardTitle>
-            <CardDescription className="font-geist">
-              Configure parameters to discover verified business leads.
-            </CardDescription>
+          <CardHeader className="flex flex-row items-start justify-between space-y-0">
+            <div className="space-y-1.5">
+              <CardTitle className="font-manrope font-normal text-2xl">
+                Lead Generation
+              </CardTitle>
+              <CardDescription className="font-geist">
+                Configure parameters to discover verified business leads.
+              </CardDescription>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+            >
+              {isLoggingOut ? "Logging out..." : "Logout"}
+            </Button>
           </CardHeader>
           <CardContent>
             <Form {...form}>

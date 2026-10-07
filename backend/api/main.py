@@ -1,10 +1,37 @@
+import os
+import secrets
 from uuid import UUID, uuid4
 
-from fastapi import FastAPI, HTTPException, status
+from dotenv import load_dotenv
+
+load_dotenv()
+
+API_ACCESS_TOKEN = os.getenv("API_ACCESS_TOKEN")
+if not API_ACCESS_TOKEN or not API_ACCESS_TOKEN.strip():
+    raise RuntimeError(
+        "API_ACCESS_TOKEN environment variable is missing or empty. "
+        "Server cannot start unprotected."
+    )
+
+from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, Field
 
 from graph.execute_graph import execute_graph
+
+security = HTTPBearer(auto_error=False)
+
+
+def verify_access_token(
+    credentials: HTTPAuthorizationCredentials | None = Depends(security),
+) -> None:
+    if not credentials or not secrets.compare_digest(credentials.credentials, API_ACCESS_TOKEN):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or missing access token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
 
 app = FastAPI(
@@ -19,6 +46,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get(
+    "/health",
+    status_code=status.HTTP_200_OK,
+)
+def health_check():
+    """
+    Open health check route accessible without authentication.
+    """
+    return {"status": "ok"}
+
 
 
 class LeadGenerationRequest(BaseModel):
@@ -50,6 +89,7 @@ class LeadGenerationResponse(BaseModel):
     "/leads/generate",
     response_model=LeadGenerationResponse,
     status_code=status.HTTP_200_OK,
+    dependencies=[Depends(verify_access_token)],
 )
 def generate_leads(request: LeadGenerationRequest):
     """
