@@ -40,7 +40,7 @@ class LeadGenerationRequest(BaseModel):
     min_sources: int = Field(default=2, ge=1)
     require_official_source: bool = True
 
-    max_leads: int = Field(default=20, ge=1, le=100)
+    max_leads: int = Field(default=10, ge=1, le=100)
 
 
 class LeadGenerationResponse(BaseModel):
