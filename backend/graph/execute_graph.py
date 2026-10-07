@@ -18,10 +18,8 @@ class LeadGenerationRequest(BaseModel):
     require_contact: bool = True
     require_whatsapp: bool = False
 
-    min_sources: int = Field(default=2, ge=1)
     require_official_source: bool = True
 
-    max_leads: int = Field(default=20, ge=1, le=100)
 
 # -----------------------------
 # Graph Execution
@@ -49,10 +47,9 @@ def execute_graph(
         "require_contact": request.require_contact,
         "require_whatsapp": request.require_whatsapp,
 
-        "min_sources": request.min_sources,
+
         "require_official_source": request.require_official_source,
 
-        "max_leads": request.max_leads,
 
         "search_queries": [],
         "search_results": [],

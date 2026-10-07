@@ -37,10 +37,8 @@ class LeadGenerationRequest(BaseModel):
     require_contact: bool = True
     require_whatsapp: bool = False
 
-    min_sources: int = Field(default=2, ge=1)
     require_official_source: bool = True
 
-    max_leads: int = Field(default=10, ge=1, le=100)
 
 
 class LeadGenerationResponse(BaseModel):

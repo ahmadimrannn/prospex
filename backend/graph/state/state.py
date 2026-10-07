@@ -13,13 +13,9 @@ class LeadAgentState(TypedDict):
     require_website: bool = True
     require_contact: bool = True
     require_whatsapp: bool = False
-
-    # Verification requirements
-    min_sources: int = 2
     require_official_source: bool = True
 
     # Search configuration
-    max_leads: int = 10
     search_queries: List[str] = []
     search_results: List[any]
 

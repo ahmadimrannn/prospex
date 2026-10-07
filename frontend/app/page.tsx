@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/preserve-manual-memoization */
 "use client";
 
 import * as React from "react";
@@ -55,16 +56,7 @@ const leadFormSchema = z.object({
   require_website: z.boolean(),
   require_contact: z.boolean(),
   require_whatsapp: z.boolean(),
-  min_sources: z.coerce
-    .number({ invalid_type_error: "Minimum sources must be a number" })
-    .int("Must be an integer")
-    .min(1, "Minimum sources must be at least 1"),
   require_official_source: z.boolean(),
-  max_leads: z.coerce
-    .number({ invalid_type_error: "Max leads must be a number" })
-    .int("Must be an integer")
-    .min(1, "Max leads must be at least 1")
-    .max(100, "Max leads cannot exceed 100"),
 });
 
 type LeadFormValues = z.infer<typeof leadFormSchema>;
@@ -95,9 +87,7 @@ export default function LeadGenerationPage() {
       require_website: true,
       require_contact: true,
       require_whatsapp: false,
-      min_sources: 2,
       require_official_source: true,
-      max_leads: 20,
     },
   });
 
@@ -126,9 +116,7 @@ export default function LeadGenerationPage() {
       require_website: values.require_website,
       require_contact: values.require_contact,
       require_whatsapp: values.require_whatsapp,
-      min_sources: Number(values.min_sources),
       require_official_source: values.require_official_source,
-      max_leads: Number(values.max_leads),
     };
 
     try {
@@ -370,60 +358,6 @@ export default function LeadGenerationPage() {
                             onCheckedChange={field.onChange}
                           />
                         </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Min Sources & Max Leads */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                  <FormField
-                    control={form.control}
-                    name="min_sources"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="font-geist">Min Sources</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            min={1}
-                            className="font-geist"
-                            {...field}
-                            value={field.value ?? ""}
-                            onChange={(e) =>
-                              field.onChange(
-                                e.target.value === "" ? "" : Number(e.target.value)
-                              )
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="max_leads"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="font-geist">Max Leads</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            min={1}
-                            max={100}
-                            className="font-geist"
-                            {...field}
-                            value={field.value ?? ""}
-                            onChange={(e) =>
-                              field.onChange(
-                                e.target.value === "" ? "" : Number(e.target.value)
-                              )
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
