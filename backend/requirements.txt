@@ -7,7 +7,11 @@ langchain-google-genai
 
 exa-py
 
+langgraph-checkpoint-postgres
+psycopg-pool
+
 uvicorn
+fastapi
 python-dotenv
 
 psycopg
