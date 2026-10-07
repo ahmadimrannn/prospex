@@ -1,4 +1,4 @@
-from graph.state import LeadAgentState
+from graph.state.state import LeadAgentState
 from tools.web_search import web_search
 
 
