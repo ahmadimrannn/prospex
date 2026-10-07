@@ -1,6 +1,7 @@
 from uuid import UUID, uuid4
 
 from fastapi import FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from graph.execute_graph import execute_graph
@@ -9,6 +10,14 @@ from graph.execute_graph import execute_graph
 app = FastAPI(
     title="Lead Generation Agent",
     version="1.0.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
