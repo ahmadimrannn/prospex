@@ -18,8 +18,8 @@ export async function POST(request: Request) {
     const username = typeof body.username === "string" ? body.username : "";
     const password = typeof body.password === "string" ? body.password : "";
 
-    const envUser = process.env.ADMIN_USERNAME || "";
-    const envPass = process.env.ADMIN_PASSWORD || "";
+    const envUser = process.env.ADMIN_USERNAME!;
+    const envPass = process.env.ADMIN_PASSWORD!;
 
     const isUserValid = envUser.length > 0 && safeCompare(username, envUser);
     const isPassValid = envPass.length > 0 && safeCompare(password, envPass);

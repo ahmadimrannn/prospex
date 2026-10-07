@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -81,16 +80,16 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-muted/30">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-semibold tracking-tight">
-            Admin Login
+          <CardTitle className="text-2xl font-manrope">
+            Login to access the form
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="font-geist">
             Enter your credentials to access the Lead Generation system
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {errorMessage && (
-            <Alert variant="destructive">
+            <Alert variant="destructive" className="font-geist">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Authentication Failed</AlertTitle>
               <AlertDescription>{errorMessage}</AlertDescription>
@@ -104,10 +103,10 @@ export default function LoginPage() {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
+                    <FormLabel className="font-geist">Username</FormLabel>
+                    <FormControl className="font-geist">
                       <Input
-                        placeholder="admin"
+                        placeholder="Enter the admin username"
                         autoComplete="username"
                         disabled={isSubmitting}
                         {...field}
@@ -123,11 +122,11 @@ export default function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
+                    <FormLabel className="font-geist">Password</FormLabel>
+                    <FormControl className="font-geist">
                       <Input
                         type="password"
-                        placeholder="••••••••"
+                        placeholder="Enter the admin password"
                         autoComplete="current-password"
                         disabled={isSubmitting}
                         {...field}
@@ -140,7 +139,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full mt-2"
+                className="w-full mt-2 font-geist"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
