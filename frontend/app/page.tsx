@@ -202,6 +202,7 @@ export default function LeadGenerationPage() {
               </CardTitle>
               <CardDescription className="font-geist">
                 Configure parameters to discover verified business leads.
+                <p>* As the LLM we are using is on a free tier, so make sure not to send more than 2-3 RPM (Requests Per Minute) *</p>
               </CardDescription>
             </div>
             <Button
