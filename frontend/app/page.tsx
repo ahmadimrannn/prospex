@@ -65,6 +65,7 @@ type LeadFormValues = z.infer<typeof leadFormSchema>;
 interface ApiResponse {
     thread_id: string;
     success: boolean;
+    status: string;
     message: string;
     leads: Record<string, unknown>[];
 }
@@ -428,9 +429,13 @@ export default function LeadGenerationPage() {
                                             {result.thread_id}
                                         </Badge>
                                     )}
-                                    {result.success && (
+                                    {result.success ? (
                                         <Badge variant="success">
-                                            {result.message}
+                                            Status: {result.status}, Message: {result.message}
+                                        </Badge>
+                                    ) : (
+                                        <Badge variant="destructive">
+                                            Status: {result.status}, Message: {result.message}
                                         </Badge>
                                     )}
                                 </div>
