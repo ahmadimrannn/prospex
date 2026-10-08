@@ -1,5 +1,6 @@
 from graph.state.state import LeadAgentState
 from tools.leads import insert_lead
+from tools.hubspot import write_leads_to_hubspot
 
 
 def finalize_leads(state: LeadAgentState):
@@ -16,6 +17,17 @@ def finalize_leads(state: LeadAgentState):
                 f"Failed to insert lead "
                 f"{lead.get('business_name', 'unknown')}: {str(e)}"
             )
+
+    try:
+        hubspot_result = write_leads_to_hubspot(verified_leads)
+    except Exception as e:
+        print("Failed to write leads into the CRM")
+
+    print(
+        f"HubSpot: created={hubspot_result['created']}, "
+        f"already_exists={hubspot_result['already_exists']}, "
+        f"failed={hubspot_result['failed']}"
+    )
 
     return {
         "leads": verified_leads
