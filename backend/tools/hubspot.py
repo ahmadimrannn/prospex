@@ -63,17 +63,17 @@ def is_phone(value: str | None) -> bool:
 
 
 # COMPANY
-def create_company(company_name: str, company_domain: str | None):
-    """Create a company in HubSpot."""
-
+def create_company(
+    company_name: str,
+    company_domain: str | None,
+    industry: str | None = None,
+    city: str | None = None,
+):
     if not company_name:
         print("Cannot create company without a company name.")
         return None
 
-    url = (
-        f"{HUBSPOT_API_BASE}"
-        f"/crm/objects/{HUBSPOT_API_VERSION}/companies"
-    )
+    url = f"{HUBSPOT_API_BASE}/crm/objects/{HUBSPOT_API_VERSION}/companies"
 
     properties = {
         "name": company_name,
@@ -81,6 +81,12 @@ def create_company(company_name: str, company_domain: str | None):
 
     if company_domain:
         properties["domain"] = company_domain
+
+    if industry:
+        properties["industry"] = industry
+
+    if city:
+        properties["city"] = city
 
     payload = {
         "properties": properties
@@ -111,7 +117,6 @@ def create_company(company_name: str, company_domain: str | None):
         )
 
         return None
-
 
 def search_company_by_name(company_name: str):
     """Find a HubSpot company by exact company name."""
@@ -632,7 +637,6 @@ def associate_contact_with_company(
         return False
 
 
-# LEAD WRITER
 def write_lead_to_hubspot(lead: dict) -> dict:
     """
     Write one verified lead into HubSpot.
@@ -659,6 +663,8 @@ def write_lead_to_hubspot(lead: dict) -> dict:
         }
 
     business_name = lead.get("business_name")
+    industry = lead.get("industry")
+    city = lead.get("city")
     website = lead.get("website")
     contact = lead.get("contact")
 
@@ -676,9 +682,7 @@ def write_lead_to_hubspot(lead: dict) -> dict:
 
     # First check by domain.
     if domain:
-        existing_company_id = search_company_by_domain(
-            domain
-        )
+        existing_company_id = search_company_by_domain(domain)
 
     # Fallback to company name.
     if not existing_company_id:
@@ -706,6 +710,8 @@ def write_lead_to_hubspot(lead: dict) -> dict:
     company_id = create_company(
         company_name=business_name,
         company_domain=domain,
+        industry=industry,
+        city=city,
     )
 
     if not company_id:
@@ -723,7 +729,6 @@ def write_lead_to_hubspot(lead: dict) -> dict:
         contact = contact.strip()
 
         if is_email(contact):
-
             contact_id = create_or_update_contact(
                 firstname=business_name,
                 lastname="",
@@ -731,7 +736,6 @@ def write_lead_to_hubspot(lead: dict) -> dict:
             )
 
         elif is_phone(contact):
-
             contact_id = create_or_update_contact(
                 firstname=business_name,
                 lastname="",
