@@ -422,7 +422,7 @@ export default function LeadGenerationPage() {
                                 <CardTitle className="font-manrope font-normal text-xl">
                                     Generated Results
                                 </CardTitle>
-                                <div className="flex flex-col flex-wrap">
+                                <div className="flex flex-col gap-y-1 flex-wrap">
                                     {result.thread_id && (
                                         <Badge variant="outline" className="font-geist">
                                             {result.thread_id}
