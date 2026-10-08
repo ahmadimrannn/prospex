@@ -82,6 +82,8 @@ class LeadGenerationRequest(BaseModel):
 
 class LeadGenerationResponse(BaseModel):
     thread_id: UUID
+    success: bool
+    message: str
     leads: list[dict]
 
 

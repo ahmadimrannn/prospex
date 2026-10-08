@@ -77,5 +77,7 @@ def execute_graph(
 
     return {
         "thread_id": thread_id,
+        "success": True,
+        "message": "New leads are written into CRM successfully.",
         "leads": result.get("leads", []),
     }
