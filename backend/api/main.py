@@ -41,7 +41,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://prospex-toua.vercel.app"],
+    allow_origins=["https://prospex-toua.vercel.app", "http://localhost:3000", "http://localhost:8000"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -83,6 +83,7 @@ class LeadGenerationRequest(BaseModel):
 class LeadGenerationResponse(BaseModel):
     thread_id: UUID
     success: bool
+    status: str
     message: str
     leads: list[dict]
 

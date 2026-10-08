@@ -30,5 +30,8 @@ def finalize_leads(state: LeadAgentState):
     )
 
     return {
-        "leads": verified_leads
-    }
+    "success": hubspot_result["success"],
+    "status": hubspot_result["status"],
+    "message": hubspot_result["message"],
+    "leads": verified_leads,
+}

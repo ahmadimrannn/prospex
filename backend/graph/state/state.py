@@ -29,3 +29,7 @@ class LeadAgentState(TypedDict):
 
     # Final output
     leads: List[dict] = []
+
+    success: bool = True
+    status: str
+    message: str

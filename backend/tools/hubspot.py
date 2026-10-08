@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 import requests
 
 from config.hubspot_config import headers
+from config.settings import HUBSPOT_INDUSTRY_MAP
 
 
 HUBSPOT_API_BASE = "https://api.hubapi.com"
@@ -61,6 +62,20 @@ def is_phone(value: str | None) -> bool:
 
     return len(digits) >= 7
 
+def normalize_hubspot_industry(industry: str | None) -> str | None:
+    """
+    Convert the AI-generated industry into a valid HubSpot
+    industry enumeration value.
+
+    Returns None when the industry cannot be safely mapped.
+    """
+
+    if not industry:
+        return None
+
+    normalized = industry.strip().lower()
+
+    return HUBSPOT_INDUSTRY_MAP.get(normalized)
 
 # COMPANY
 def create_company(
@@ -73,18 +88,32 @@ def create_company(
         print("Cannot create company without a company name.")
         return None
 
-    url = f"{HUBSPOT_API_BASE}/crm/objects/{HUBSPOT_API_VERSION}/companies"
+    url = (
+        f"{HUBSPOT_API_BASE}/crm/objects/"
+        f"{HUBSPOT_API_VERSION}/companies"
+    )
 
     properties = {
         "name": company_name,
     }
 
+    # Website/domain
     if company_domain:
         properties["domain"] = company_domain
 
-    if industry:
-        properties["industry"] = industry
+    # Normalize AI-generated industry into a valid
+    # HubSpot enumeration value.
+    hubspot_industry = normalize_hubspot_industry(industry)
 
+    if hubspot_industry:
+        properties["industry"] = hubspot_industry
+    elif industry:
+        print(
+            f"Skipping unsupported HubSpot industry value: "
+            f"{industry}"
+        )
+
+    # City is a free-text HubSpot company property.
     if city:
         properties["city"] = city
 
@@ -102,7 +131,14 @@ def create_company(
 
         response.raise_for_status()
 
-        return response.json().get("id")
+        company_id = response.json().get("id")
+
+        print(
+            f"HubSpot company created successfully: "
+            f"{company_name} ({company_id})"
+        )
+
+        return company_id
 
     except requests.exceptions.RequestException as e:
         error_details = (
@@ -767,6 +803,10 @@ def write_leads_to_hubspot(leads: list[dict]) -> dict:
 
     Existing leads are skipped automatically.
     One failure does not stop the remaining leads.
+
+    Returns:
+        Summary containing counts, overall status,
+        frontend message, and individual results.
     """
 
     results = []
@@ -780,9 +820,7 @@ def write_leads_to_hubspot(leads: list[dict]) -> dict:
             result = {
                 "success": False,
                 "status": "failed",
-                "business_name": lead.get(
-                    "business_name"
-                ),
+                "business_name": lead.get("business_name"),
                 "reason": str(e),
             }
 
@@ -812,15 +850,75 @@ def write_leads_to_hubspot(leads: list[dict]) -> dict:
         if result.get("status") == "skipped"
     ]
 
+    total = len(leads)
+
+    created_count = len(created)
+    already_exists_count = len(already_exists)
+    failed_count = len(failed)
+    skipped_count = len(skipped)
+
+    # Determine overall CRM write status.
+    if created_count > 0 and failed_count == 0:
+        if already_exists_count > 0:
+            status = "partial"
+            message = (
+                "New leads were written into CRM successfully. "
+                "Some leads already existed."
+            )
+        else:
+            status = "created"
+            message = (
+                "New leads are written into CRM successfully."
+            )
+
+    elif created_count > 0 and failed_count > 0:
+        status = "partial"
+        message = (
+            "Some leads were written into CRM, "
+            "but some leads could not be written."
+        )
+
+    elif created_count == 0 and already_exists_count == total:
+        status = "already_exists"
+        message = (
+            "No new leads were written. "
+            "All leads already exist in CRM."
+        )
+
+    elif created_count == 0 and failed_count > 0:
+        status = "failed"
+        message = (
+            "No leads were written into CRM. "
+            "Some leads failed to write."
+        )
+
+    elif created_count == 0 and skipped_count == total:
+        status = "skipped"
+        message = (
+            "No leads were written into CRM. "
+            "All leads were skipped."
+        )
+
+    else:
+        status = "partial"
+        message = (
+            "Lead processing completed, "
+            "but no new leads were written."
+        )
+
     return {
-        "total": len(leads),
-        "created": len(created),
-        "already_exists": len(already_exists),
-        "failed": len(failed),
-        "skipped": len(skipped),
+        "success": created_count > 0,
+        "status": status,
+        "message": message,
+
+        "total": total,
+        "created": created_count,
+        "already_exists": already_exists_count,
+        "failed": failed_count,
+        "skipped": skipped_count,
+
         "results": results,
     }
-
 
 # NOTE
 def write_note(

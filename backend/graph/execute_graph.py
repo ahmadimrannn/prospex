@@ -62,6 +62,9 @@ def execute_graph(
         "rejected_leads": [],
 
         "leads": [],
+        "success": True,
+        "status": "",
+        "message": ""
     }
 
     config = {
@@ -77,7 +80,8 @@ def execute_graph(
 
     return {
         "thread_id": thread_id,
-        "success": True,
-        "message": "New leads are written into CRM successfully.",
+        "success": result.get("success"),
+        "status": result.get("status"),
+        "message": result.get("message"),
         "leads": result.get("leads", []),
     }
