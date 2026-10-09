@@ -9,6 +9,8 @@ def lead_verification_node(state: LeadAgentState):
 
     leads = state.get("discovered_leads", [])
     search_results = state.get("search_results", [])
+    input_city = state.get("city", "").strip().casefold()
+    is_website_required = state.get("require_website", False)
 
     if not leads:
         return {
@@ -34,6 +36,19 @@ def lead_verification_node(state: LeadAgentState):
             if hasattr(lead, "model_dump")
             else lead
         )
+
+        lead_city = str(lead_data.get("city", "")).strip().casefold()
+
+        # Reject leads whose city does not match the requested city.
+        if input_city and input_city not in lead_city and lead_city not in input_city:
+            rejected_leads.append(lead_data)
+            continue
+
+        lead_website = lead_data.get("website")
+
+        if is_website_required and not lead_website:
+            rejected_leads.append(lead_data)
+            continue
 
         if lead_data.get("status") == "verified":
             verified_leads.append(lead_data)
