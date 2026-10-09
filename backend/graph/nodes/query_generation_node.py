@@ -10,7 +10,6 @@ def query_generation_node(state: LeadAgentState):
 
     require_website = state.get("require_website", False)
     require_contact = state.get("require_contact", False)
-    require_whatsapp = state.get("require_whatsapp", False)
     require_official_source = state.get("require_official_source", True)
 
     # Fetch existing leads from Neon for this industry and city.
@@ -42,13 +41,7 @@ def query_generation_node(state: LeadAgentState):
     # Search for contact information only when it is required.
     if require_contact:
         queries.append(
-            f'{industry} businesses in {city} phone email contact details'
-        )
-
-    # Search specifically for publicly available WhatsApp evidence.
-    if require_whatsapp:
-        queries.append(
-            f'{industry} businesses in {city} WhatsApp contact'
+            f'{industry} businesses in {city} phone email contact details, and WhatsApp contact'
         )
 
     # Look for official social profiles when an official source is required.

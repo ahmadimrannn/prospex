@@ -12,7 +12,6 @@ class LeadAgentState(TypedDict):
     # Lead quality requirements
     require_website: bool
     require_contact: bool
-    require_whatsapp: bool
     require_official_source: bool
 
     # Search configuration

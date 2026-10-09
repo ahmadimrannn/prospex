@@ -56,7 +56,6 @@ const leadFormSchema = z.object({
     exclude_keywords: z.string().optional(),
     require_website: z.boolean(),
     require_contact: z.boolean(),
-    require_whatsapp: z.boolean(),
     require_official_source: z.boolean(),
 });
 
@@ -102,7 +101,6 @@ export default function LeadGenerationPage() {
             exclude_keywords: "",
             require_website: true,
             require_contact: true,
-            require_whatsapp: false,
             require_official_source: true,
         },
     });
@@ -131,7 +129,6 @@ export default function LeadGenerationPage() {
             exclude_keywords: parseKeywords(values.exclude_keywords),
             require_website: values.require_website,
             require_contact: values.require_contact,
-            require_whatsapp: values.require_whatsapp,
             require_official_source: values.require_official_source,
         };
 
@@ -353,23 +350,6 @@ export default function LeadGenerationPage() {
                                         )}
                                     />
 
-                                    <FormField
-                                        control={form.control}
-                                        name="require_whatsapp"
-                                        render={({ field }) => (
-                                            <FormItem className="flex items-center justify-between py-1">
-                                                <FormLabel className="font-geist cursor-pointer">
-                                                    Require WhatsApp
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Switch
-                                                        checked={field.value}
-                                                        onCheckedChange={field.onChange}
-                                                    />
-                                                </FormControl>
-                                            </FormItem>
-                                        )}
-                                    />
 
                                     <FormField
                                         control={form.control}

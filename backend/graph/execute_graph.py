@@ -16,7 +16,6 @@ class LeadGenerationRequest(BaseModel):
 
     require_website: bool
     require_contact: bool
-    require_whatsapp: bool
 
     require_official_source: bool
 
@@ -45,7 +44,6 @@ def execute_graph(
 
         "require_website": request.require_website,
         "require_contact": request.require_contact,
-        "require_whatsapp": request.require_whatsapp,
 
 
         "require_official_source": request.require_official_source,

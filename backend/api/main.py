@@ -74,7 +74,6 @@ class LeadGenerationRequest(BaseModel):
 
     require_website: bool
     require_contact: bool
-    require_whatsapp: bool
 
     require_official_source: bool
 

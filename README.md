@@ -435,7 +435,6 @@ A typical request contains:
 {
   "industry": "restaurants",
   "city": "Gujranwala",
-  "require_whatsapp": true
 }
 ```
 
