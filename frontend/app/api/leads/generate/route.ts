@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { verifySession } from "@/lib/session";
 
-export const maxDuration = 60;
+export const maxDuration = 270;
 
 export async function POST(request: Request) {
   try {
