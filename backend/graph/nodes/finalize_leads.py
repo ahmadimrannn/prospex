@@ -18,10 +18,7 @@ def finalize_leads(state: LeadAgentState):
                 f"{lead.get('business_name', 'unknown')}: {str(e)}"
             )
 
-    try:
-        hubspot_result = write_leads_to_hubspot(verified_leads)
-    except Exception as e:
-        print("Failed to write leads into the CRM")
+    hubspot_result = write_leads_to_hubspot(verified_leads)
 
     print(
         f"HubSpot: created={hubspot_result['created']}, "

@@ -799,20 +799,19 @@ def write_lead_to_hubspot(lead: dict) -> dict:
 
 def write_leads_to_hubspot(leads: list[dict]) -> dict:
     """
-    Write verified leads into HubSpot.
+        Write verified leads into HubSpot.
 
-    Existing leads are skipped automatically.
-    One failure does not stop the remaining leads.
+        Existing leads are skipped automatically.
+        One failure does not stop the remaining leads.
 
-    Returns:
-        Summary containing counts, overall status,
-        frontend message, and individual results.
+        Returns:
+            Summary containing counts, overall status,
+            frontend message, and individual results.
     """
 
     results = []
 
     for lead in leads:
-
         try:
             result = write_lead_to_hubspot(lead)
 
