@@ -119,80 +119,118 @@ def generate_lead_extractor_prompt(search_results):
     return prompt
 
 
-def generate_lead_verification_prompt(
-    leads,
-    search_results,
-    requested_industry,
-    requested_city,
-):
+def generate_lead_verification_prompt(leads, search_results):
     prompt = f"""
-        You are a business lead evidence assessment agent.
+        You are a strict business lead verification agent.
 
-        Requested industry: {requested_industry}
-        Requested city: {requested_city}
+        Verify the extracted leads using ONLY the provided Exa search results.
+        Do not browse, use outside knowledge, infer unsupported facts, or fabricate data.
 
+        INPUT
         Extracted leads:
         {leads}
 
         Exa search results:
         {search_results}
 
-        RULES
+        VERIFICATION RULES
 
-        1. Assess every input lead. Do not omit a lead merely because evidence
-        is incomplete.
+        For each lead verify:
 
-        2. INDUSTRY:
-        - Determine whether the business actually belongs to the requested
-            industry or a genuine synonym of it.
-        - Reject unrelated businesses.
-        - Do not invent an industry to make a lead fit.
-        - If the requested industry is nonsensical or unsupported by the
-            evidence, do not label unrelated businesses as matches.
+        1. BUSINESS
+        - The business exists and matches the requested industry.
+        - The requested city is explicitly supported by evidence.
+        - Do not infer city from phone codes, domains, language, or search queries.
 
-        3. CITY:
-        - Use the supplied evidence.
-        - Recognize city names followed by province, state, or country.
-        - Do not infer a city from a phone code or domain.
-        - Distinguish an explicitly different city from missing city evidence.
-
-        4. WEBSITE:
-        - Return a website only when supported by evidence.
-        - Do not confuse a directory listing or social profile with a website.
-
-        5. CONTACT:
-        - Return only publicly supported contact details.
-        - Never invent a phone number or email.
-
-        6. WHATSAPP:
-        - Require explicit evidence such as a WhatsApp link, button,
-            click-to-chat link, or explicit WhatsApp statement.
-        - A mobile number alone is not WhatsApp evidence.
-
-        7. SOURCES:
-        - Preserve source URLs and evidence that relate to the same business.
+        2. WEBSITE
+        - Return a website only if it is clearly the official business website.
         - Prefer official websites and official social profiles.
-        - Do not claim that a directory is an official business source.
+        - Do not treat directories, review sites, news, or aggregators as the official website.
 
-        8. STATUS:
-        - "verified" means strong evidence supports the business identity,
-            industry, and location.
-        - "partial" means the business may be relevant but some evidence
-            is missing.
-        - "unverified" means evidence is weak, conflicting, or insufficient.
-        - Do not use status alone as a reason to omit a lead.
-        - Never fabricate missing information.
+        3. CONTACT
+        - Contact information must be publicly associated with the same business.
+        - Accept business phone, email, or official contact information.
+        - Never guess or construct contact details.
 
-        9. DUPLICATES:
-        - Avoid returning the same business more than once.
-        - Preserve the strongest available evidence.
+        4. WHATSAPP
+        - Require explicit evidence such as a wa.me link, WhatsApp button,
+        click-to-chat link, or explicit WhatsApp statement.
+        - A phone/mobile number alone is NOT WhatsApp evidence.
+        - If there is no explicit evidence, return null.
 
-        Return every assessed candidate in the required structured schema:
-        business_name, industry, city, website, contact,
-        whatsapp_evidence, source, status, verification_score,
-        verification_notes, missing_fields.
+        5. SOURCE CONSISTENCY
+        - Make sure all evidence refers to the SAME business.
+        - Compare name, website, city, address, phone, email, and industry.
+        - Never merge information from different businesses.
+        - If sources conflict, record the conflict and lower the status.
 
-        Keep missing information null or empty as appropriate.
-        Return only the structured output.
+        6. DUPLICATES
+        - Remove duplicate businesses.
+        - Same official website, phone number, address, or business name + city
+        usually indicates the same business.
+
+        SOURCE PRIORITY
+
+        Prefer:
+        1. Official business website
+        2. Official social profile
+        3. Official contact/location page
+        4. Reputable business directory
+        5. Other credible sources
+
+        Weak sources alone are not enough for strong verification.
+
+        STATUS
+
+        verified:
+        Strong evidence confirms the business, industry, city, and identity.
+
+        partial:
+        The business appears legitimate, but important information is missing
+        or cannot be fully confirmed.
+
+        unverified:
+        Evidence is insufficient, contradictory, irrelevant, or unreliable.
+
+        SCORE
+
+        Assign an evidence-based score from 0-100:
+
+        90-100 = strong official evidence
+        75-89  = good reliable evidence with minor gaps
+        50-74  = legitimate but important information is missing
+        25-49  = weak or uncertain evidence
+        0-24   = insufficient or likely invalid
+
+        The score represents evidence quality, not model confidence.
+        Do not mark a lead verified merely because its score is high.
+
+        IMPORTANT
+
+        - Accuracy over quantity.
+        - Never fabricate or infer missing information.
+        - Preserve null when information cannot be verified.
+        - Search-result snippets alone are weak evidence when stronger sources exist.
+        - Return only information supported by the provided evidence.
+
+        For verification_notes, write short factual evidence statements,
+        not opinions such as "looks trustworthy" or "probably real".
+
+        Return a structured list containing:
+
+        business_name
+        industry
+        city
+        website
+        contact
+        whatsapp_evidence
+        source
+        status
+        verification_score
+        verification_notes
+        missing_fields
+
+        Do not include explanations outside the structured output.
     """
+
     return prompt
