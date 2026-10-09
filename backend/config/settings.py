@@ -38,6 +38,27 @@ HUBSPOT_INDUSTRY_MAP = {
     "packaging manufacturer": "PACKAGING_AND_CONTAINERS",
     "electronics manufacturer": "ELECTRICAL_ELECTRONIC_MANUFACTURING",
 
+    # Beauty / personal care
+    "beauty salon": "HEALTH",
+    "beauty salon and spa": "HEALTH",
+    "health and beauty service": "HEALTH",
+    "hair salon": "HEALTH",
+    "unisex salon": "HEALTH",
+    "hairdresser": "HEALTH",
+    "barbershop": "HEALTH",
+    "spa": "HEALTH",
+    "day spa": "HEALTH",
+    "salon and skin clinic": "HEALTH",
+    "beauty parlour": "HEALTH",
+    "beauty parlor": "HEALTH",
+    "beauty lounge": "HEALTH",
+    "makeup studio": "HEALTH",
+    "makeup artist": "HEALTH",
+    "skin care clinic": "HEALTH",
+    "cosmetic clinic": "HEALTH",
+    "beauty training institute": "EDUCATION",
+    "salon training institute": "EDUCATION",
+
     # Other business categories
     "software company": "COMPUTER_SOFTWARE",
     "it services": "INFORMATION_TECHNOLOGY_AND_SERVICES",
