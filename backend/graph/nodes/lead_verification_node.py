@@ -43,5 +43,4 @@ def lead_verification_node(state: LeadAgentState):
     return {
         "verified_leads": verified_leads,
         "rejected_leads": rejected_leads,
-        "leads": verified_leads,
     }
