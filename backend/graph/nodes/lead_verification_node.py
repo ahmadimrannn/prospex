@@ -1,7 +1,7 @@
 from graph.state.state import LeadAgentState
 from graph.prompts.prompts import generate_lead_verification_prompt
 from graph.schemas.schema import VerifiedLeadList
-from config.llm import llm
+from config.llm import model
 
 
 def lead_verification_node(state: LeadAgentState):
@@ -22,7 +22,7 @@ def lead_verification_node(state: LeadAgentState):
         search_results=search_results,
     )
 
-    verifier = llm.with_structured_output(VerifiedLeadList)
+    verifier = model.with_structured_output(VerifiedLeadList)
     result = verifier.invoke(prompt)
 
     verified_leads = []
