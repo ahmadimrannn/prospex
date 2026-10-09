@@ -3,47 +3,68 @@ from tools.leads import fetch_existing_leads
 
 
 def query_generation_node(state: LeadAgentState):
-    """Fetch existing leads and generate targeted search queries."""
+    """Fetch existing leads and generate queries based on lead requirements."""
 
-    industry = state["industry"]
-    city = state["city"]
+    industry = state["industry"].strip()
+    city = state["city"].strip()
 
-    # Fetch businesses already stored in Neon
+    require_website = state.get("require_website", False)
+    require_contact = state.get("require_contact", False)
+    require_whatsapp = state.get("require_whatsapp", False)
+    require_official_source = state.get("require_official_source", True)
+
+    # Fetch existing leads from Neon for this industry and city.
     existing_leads = fetch_existing_leads(
         industry=industry,
         city=city,
     )
 
-    # Extract existing business names
     excluded_businesses = [
-        lead["business_name"]
+        lead["business_name"].strip()
         for lead in existing_leads
         if lead.get("business_name")
+        and lead["business_name"].strip()
     ]
 
-    # queries = [
-    #     f"{industry} in {city} official website",
-    #     f"{industry} in {city} contact",
-    #     f"{industry} in {city} phone email",
-    #     f"{industry} {city} address",
-    #     f'{industry} {city} "contact us"',
-    # ]
+    # Generate focused queries based on the requested requirements.
+    queries = []
 
-    # if state["require_whatsapp"]:
-    #     queries.extend([
-    #         f"{industry} {city} WhatsApp",
-    #         f'{industry} {city} "WhatsApp" contact',
-    #     ])
-
-    queries = [
-        f'{industry} businesses in {city} official website',
-    ]
-
-    # Only perform an additional search when WhatsApp evidence is explicitly required.
-    if state["require_whatsapp"]:
+    # Always search for businesses matching the requested industry and city.
+    if require_website or require_official_source:
         queries.append(
-            f'{industry} businesses in {city} WhatsApp'
+            f'{industry} businesses in {city} official website'
         )
+    else:
+        queries.append(
+            f'{industry} businesses in {city}'
+        )
+
+    # Search for contact information only when it is required.
+    if require_contact:
+        queries.append(
+            f'{industry} businesses in {city} phone email contact details'
+        )
+
+    # Search specifically for publicly available WhatsApp evidence.
+    if require_whatsapp:
+        queries.append(
+            f'{industry} businesses in {city} WhatsApp contact'
+        )
+
+    # Look for official social profiles when an official source is required.
+    if require_official_source:
+        queries.append(
+            f'{industry} businesses in {city} official Facebook Instagram'
+        )
+
+    # If a website is required, search for businesses with their own domains.
+    if require_website:
+        queries.append(
+            f'{industry} in {city} business website contact us'
+        )
+
+    # Remove duplicate queries while preserving order.
+    queries = list(dict.fromkeys(queries))
 
     return {
         "search_queries": queries,

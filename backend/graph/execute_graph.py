@@ -14,11 +14,11 @@ class LeadGenerationRequest(BaseModel):
     keywords: list[str] = Field(default_factory=list)
     exclude_keywords: list[str] = Field(default_factory=list)
 
-    require_website: bool = True
-    require_contact: bool = True
-    require_whatsapp: bool = False
+    require_website: bool
+    require_contact: bool
+    require_whatsapp: bool
 
-    require_official_source: bool = True
+    require_official_source: bool
 
 
 # -----------------------------

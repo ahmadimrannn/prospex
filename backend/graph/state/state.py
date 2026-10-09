@@ -10,10 +10,10 @@ class LeadAgentState(TypedDict):
     exclude_keywords: List[str] = []
 
     # Lead quality requirements
-    require_website: bool = True
-    require_contact: bool = True
-    require_whatsapp: bool = False
-    require_official_source: bool = True
+    require_website: bool
+    require_contact: bool
+    require_whatsapp: bool
+    require_official_source: bool
 
     # Search configuration
     search_queries: List[str] = []
@@ -30,6 +30,6 @@ class LeadAgentState(TypedDict):
     # Final output
     leads: List[dict] = []
 
-    success: bool = True
+    success: bool
     status: str
     message: str
