@@ -142,15 +142,28 @@ export default function LeadGenerationPage() {
             const data = await response.json().catch(() => null);
 
             if (!response.ok) {
+                const detail = data?.detail;
+
                 const message =
-                    (data && (data.message || data.error || data.detail)) ||
-                    "Failed to generate leads.";
+                    (typeof detail === "string" && detail) ||
+                    detail?.message ||
+                    detail?.error ||
+                    data?.message ||
+                    data?.error ||
+                    `Request failed (${response.status})`;
+
                 setError({
                     status: response.status,
-                    message: typeof message === "string" ? message : JSON.stringify(message),
+                    message:
+                        typeof message === "string"
+                            ? message
+                            : JSON.stringify(message),
                 });
+
                 return;
+
             }
+
 
             setResult(data as ApiResponse);
         } catch (err) {
